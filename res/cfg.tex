@@ -1,0 +1,22 @@
+\usepackage{fvextra, fontspec, newunicodechar}
+\usepackage[margin=2cm]{geometry}
+\usepackage{coffeestains}
+\usepackage{everypage}
+\usepackage{pgf}
+\usepackage[export]{adjustbox}
+
+\setmainfont{LucidaGrande-Regular}[
+  BoldFont = {LucidaGrande-Bold},
+  ItalicFont = {LucidaGrande-Italic},
+  BoldItalicFont = {LucidaGrande-BoldItalic}
+]
+\setmonofont{APL385 Unicode}
+
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+
+\newfontfamily{\fallbackfont}{Apl385 Unicode}[Scale=MatchLowercase]
+\DeclareTextFontCommand{\textfallback}{\fallbackfont}
+
+\newunicodechar{→}{\textfallback{→}}
+\newunicodechar{∆}{\textfallback{∆}}
+

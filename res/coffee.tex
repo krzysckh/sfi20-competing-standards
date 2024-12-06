@@ -1,0 +1,14 @@
+\pgfmathsetseed{\uniformdeviate 10000000}
+
+\pgfmathdeclarerandomlist{scales}{{0.5}{0.7}{0.9}{1.0}}
+\pgfmathdeclarerandomlist{stains}{{\coffeestainB}{\coffeestainC}}
+
+\AddEverypageHook{%
+  \pgfmathrandominteger{\angle}{15}{350}%
+  \pgfmathparse{rand/2.4}\xdef\xoffset{\pgfmathresult}%
+  \pgfmathparse{rand/2.4}\xdef\yoffset{\pgfmathresult}%
+  \pgfmathparse{(0.1 + rnd/3)}\xdef\trans{\pgfmathresult}%
+  \pgfmathrandomitem{\scale}{scales}%
+  \pgfmathrandomitem{\stain}{stains}%
+  \stain{\trans}\scale\angle{\xoffset\textwidth}{\yoffset\textheight}%
+}
