@@ -10,6 +10,13 @@
         (pop)
         (ret))
 
+    (define println
+      (call print)
+      (push 0)
+      (push 10)
+      (call print)
+      (ret))
+
     (define strlen                      ; c-style strlen from stack. max-len = 255. uses 0x0
       (<- 0 0)                          ; set counter to 0
       :loop
@@ -26,7 +33,7 @@
         (-> 0 1)
         (ret))                          ; return value from 0x0
 
-    (define strcpy-from-stack           ; strcpy a c-string from stack to [0x1 ...], use 0x0 as counter so max string-length is 255
+    (define strmov-from-stack           ; move a c-string from stack to [0x1 ...], use 0x0 as counter so max string-length is 255
       (<- 0 0)                          ; set counter to 0
       :loop
         (& je 0 :ret)                   ; return if end of string encountered
@@ -86,10 +93,48 @@
         (pop)                           ; pop :p from stack of 1st call
         (ret))
 
+    (define reverse-string
+      (call strmov-from-stack)          ; move string from stack to 0x1
+      (<-S 0 1)                         ; save len to 0x0
+      (push 0)                          ; end the string with 0
+      (push 0)                          ; init ctr to 0
+      :loop
+        (-> 0 1)                        ; read len
+        (& je :ret)                     ; return when ctr == len
+        (pop)                           ; throw len out
+        (dup)
+        (& add 1)                       ; add start of string [0x1] to ctr
+        (& add ,A//start-size)          ; add start of memory to ctr
+        (pmem)                          ; push to stack from memory
+        (swp)
+        (& add 1)                       ; increment ctr
+        (goto :loop)
+      :ret
+        (pop)
+        (pop)
+        (ret))
+
+    (define read-line
+      (push 0)
+      :loop
+        (read)
+        (& je 10 :ret)
+        (pop)
+        (goto :loop)
+      :ret
+        (pop)
+        (pop)
+        (call reverse-string)
+        (ret))
+
     :_start
       (call test-memory-rewriting)
       (call test-memory-rewriting)
-      ;; (__debug_print_stack)
+      (call print 0 "> ")
+      (call read-line)
+      (call println)
+
+      ;; (call print)
       ;; (push 0)
       ;; (push "abcd")
       ;; (call strcpy-from-stack)

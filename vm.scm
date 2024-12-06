@@ -108,6 +108,16 @@
   (lets ((stack a (pops stack)))
     (cont (+ ip 1) (cons (vref code a) stack) call-stack code)))
 
+(define (debug-print-stack ip stack call-stack code cont)
+  (print stack)
+  (cont (+ ip 1) stack call-stack code))
+
+(define (debug-print-region ip stack call-stack code cont)
+  (print "region:")
+  (lets ((stack a (pops stack)))
+    (for-each (λ (n) (print (vref code n))) (iota a 1 10))
+    (cont (+ ip 1) stack call-stack code)))
+
 (define disp-table
   `((0  . ,push)
     (1  . ,pop)
@@ -130,7 +140,11 @@
     (19 . ,jempt)
     (20 . ,jnempt)
     (21 . ,wmem)
-    (22 . ,pmem)))
+    (22 . ,pmem)
+
+    (100 . ,debug-print-stack)
+    (101 . ,debug-print-region)
+    ))
 
 (define (disp ip stack call-stack code)
   (if (>= ip (vector-length code))

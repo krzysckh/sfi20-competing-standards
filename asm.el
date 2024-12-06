@@ -40,8 +40,8 @@
     (wmem 21)
     (pmem 22)
 
-    ;; (__debug_print_stack 100 0)
-    ;; (__debug_print_region 101 1)
+    (__debug_print_stack 100 0)
+    (__debug_print_region 101 1)
     ))
 
 (defun A/definitionp (instr)
