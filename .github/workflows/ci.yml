@@ -1,5 +1,8 @@
+name: flag
+on: push
+
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
