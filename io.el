@@ -1,3 +1,5 @@
+;;; io.el --- io/data helpers for flag.el -*- lexical-binding: t; comment-column: 40 -*-
+
 (defconst A//io
   `((define print                       ; c-style print
       :loop

@@ -3,8 +3,7 @@
 all: flag.bin spec.pdf
 
 .el.bin:
-	emacs --batch \
-		-u `whoami` \
+	cask emacs --batch \
 		--load "asm.el" \
 		--load "$<" \
 		--eval "(A/compile A//$* \"$@\")"

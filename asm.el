@@ -1,4 +1,10 @@
 ;;; asm.el --- assembler for the ad hoc ctf vm -*- lexical-binding: t; comment-column: 40 -*-
+
+;; Author: Krzysztof Michałczyk <kpm@krzysckh.org>
+;; Version: 0.0
+;; Keywords: asm, ctf
+;; Package-Requires: ((emacs "28.2") (s "1.8.0") (f "0.16.0"))
+
 ;; Commentary:
 ;; warning: 0x0 for memory stuff is actually 0x0 + A//start-size
 ;;          this is caused by the 1st call to jmp to :_start
@@ -7,6 +13,7 @@
 ;; 5 bytes for 1st jump to :_start
 ;; A//dyn-memory bytes of zeroes
 ;; N bytes of your code
+
 
 (require 'dash)
 (require 'f)
@@ -227,3 +234,6 @@
     (if outfile
         (f-write-bytes (apply #'unibyte-string (append program nil)) outfile)
       program)))
+
+(provide 'asm)
+;;; asm.el ends here
