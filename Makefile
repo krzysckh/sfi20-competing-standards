@@ -1,5 +1,7 @@
 .SUFFIXES: .el .bin
 
+all: flag.bin spec.pdf
+
 .el.bin:
 	emacs --batch \
 		-u `whoami` \

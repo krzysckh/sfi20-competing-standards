@@ -1,4 +1,4 @@
-(defconst A//temp
+(defconst A//io
   `((define print                       ; c-style print
       :loop
         (& je 0 :ret)
@@ -41,7 +41,7 @@
         (-> 0 1)                        ; get counter
         (dup)
         (& add 1)                       ; add 1 to the counter
-        (& add ,A//start-size 0);
+        (& add ,A//start-size 0)
         (swp)                           ; <---------------------------------+
         (wmem)                          ; save counter to 0x0               |
         (& add ,A//start-size)          ; add A//start-size to old counter -+
@@ -53,6 +53,10 @@
         (pop)                           ; pop 0 from je
         (pop)                           ; pop :ret from je
         (-> 0 1)                        ; return n of bytes written
+        (dup)
+        (& add 1)
+        (& add ,A//start-size)
+        (& wmem 0)                      ; finish the string in memory with 0
         (ret))
 
     (define write-byte-at               ;; ptr b -> ptr + 1
@@ -127,24 +131,41 @@
         (call reverse-string)
         (ret))
 
-    :_start
-      (call test-memory-rewriting)
-      (call test-memory-rewriting)
-      (call print 0 "> ")
-      (call read-line)
-      (call println)
+    (define drain!                      ; drain stack upto 0
+      :loop
+        (& je 0 :ret)
+        (pop)
+        (pop)
+        (goto :loop)
+      :ret
+        (pop)
+        (pop)
+        (ret))
 
-      ;; (call print)
-      ;; (push 0)
-      ;; (push "abcd")
-      ;; (call strcpy-from-stack)
-      ;; (pop)
-      ;; (call memcpy 4 1 10)
-      ;; (& __debug_print_region 10)
-
-      ;; (<- 0 0 ?a ?b ?c) ;; push 0 a b c to code memory @ 0x0 (+ A//dynmem-start)
-      ;; (push "abc")
-      ;; (<-S 4 3)         ;; push 3 values from stack to code memory @ 0x4 (+ A//dynmem-start)
-      ;; (-> 0 7)          ;; push 7 values to the stack from code memory @ 0x0 (+ A//dynmem-start)
-      ;; (call print)
+    (define strcmp                      ; 0 string 0 string -> 1=true | 0=false
+      (call strmov-from-stack)
+      (pop)                             ; dispose the length returned by strmov
+      (<- 0 ,(+ 1 A//start-size))       ; initialize counter to 0x1 + A//start-szie
+      :loop
+        (-> 0 1)                        ; get couter
+        (pmem)
+        (& je :maybe-loop)
+        (goto :diff)
+      :maybe-loop
+        (& je 0 :same)
+        (pop)
+        (pop)
+        (pop)
+        (-> 0 1)
+        (& add 1)
+        (<-S 0 1)                       ; increment counter
+        (goto :loop)
+      :same
+        (pop)
+        (pop)
+        (pop)
+        (& ret 1)
+      :diff
+        (call drain!)
+        (& ret 0))
       ))

@@ -1,4 +1,4 @@
-;; -*- mode: scheme; compile-command: "printf 'b\\nc\\na\\n' | ol -r vm.scm flag.bin | tail -c +180 > /tmp/a.jpg && sxiv /tmp/a.jpg" -*-
+;; -*- mode: scheme; compile-command: "printf '2005\\nc\\n6\\n' | ol -r vm.scm flag.bin | tail -c +141 > /tmp/a.jpg && sxiv /tmp/a.jpg" -*-
 
 (import
  (owl toplevel)
@@ -115,7 +115,7 @@
 (define (debug-print-region ip stack call-stack code cont)
   (print "region:")
   (lets ((stack a (pops stack)))
-    (for-each (λ (n) (print (vref code n))) (iota a 1 10))
+    (for-each (λ (n) (print (vref code n))) (iota a 1 (+ a 10)))
     (cont (+ ip 1) stack call-stack code)))
 
 (define disp-table

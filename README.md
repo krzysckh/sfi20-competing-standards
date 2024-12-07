@@ -54,7 +54,6 @@ they accept args like they would be normal functions and get later compiled to p
 
 - `(<-S addr n)` pushes `n` values from stack to `[addr, addr+1, ..., addr+n]`. (same warning as above)
 
-
 ## Using the vm
 
 this vm implementation is written in [owl lisp](https://gitlab.com/owl-lisp/owl).
