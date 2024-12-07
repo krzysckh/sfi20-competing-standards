@@ -94,7 +94,7 @@
         (call write-byte-at 11)         ; write
         (call write-byte-at 11)         ; write
         (call write-byte-at 11)         ; write
-        (call write-byte-at 17)         ; ret
+        (call write-byte-at 18)         ; ret
 
         (pop)                           ; pop :p from stack of 1st call
         (ret))
@@ -170,4 +170,95 @@
       :diff
         (call drain!)
         (& ret 0))
-      ))
+
+    ;; https://www.stix.id.au/wiki/Fast_8-bit_pseudorandom_number_generator
+    (define rand
+      (-> #x103 1)                      ; x++
+      (& add 1)
+      (<-S #x103 1)
+      (-> #x100 1)                      ; get a
+      (-> #x102 1)                      ; get c
+      (xor)                             ; (a ^ c)  <-+
+      (-> #x103 1)                      ; get x      |
+      (xor)                             ; ... ^ x  <-+
+      (<-S #x100 1)                     ; a = ... ---+
+      (-> #x100 2)                      ; get a, b
+      (add)
+      (<-S #x101 1)                     ; b = b + a
+      (push 1)
+      (-> #x101 1)                      ; get b
+      (>>)                              ; b >> 1   <-+
+      (-> #x102 1)                      ; get c      |
+      (add)                             ; c + ...  <-+
+      (-> #x100 1)                      ; get a      |
+      (xor)                             ; ... ^ a  <-+
+      (<-S #x102 1)                     ; c = ... ---+
+
+      (-> #x102 1)                      ; return c
+      (ret)
+      )
+
+    (define init-rand                   ;; c b a
+      (<-S #x100 3)                     ; rand data kept at [a=0x100, b=0x101, c=0x102, x=0x103]
+      (call rand)
+      (pop)
+      (ret))
+
+    (define not
+      (& je 0 :z)
+      (pop)
+      (pop)
+      (& ret 0)
+      :z
+        (pop)
+        (pop)
+        (& ret 1))
+
+    (define lt                          ;; b a -> a < b ? 1 : 0
+      (sub)
+      (& jlz :lower)
+      (pop)
+      (& ret 0)
+      :lower
+        (pop)
+        (& ret 1))
+
+    (define <
+      (call lt)
+      (ret))
+
+    (define gt
+      (call lt)
+      (call not)
+      (ret))
+
+    (define >
+      (call gt)
+      (ret))
+
+    (define modulo                      ;; b a -> a % b (stores data in [0x0, 0x1] so a and b < 256)
+      (<-S 0 2)                         ; save a to 0x0 and b to 0x1
+      :loop
+        (-> 0 2)
+        (swp)
+        (call <)
+        (& jne 0 :ok)                   ; if a > b
+        (pop)                           ;
+        (pop)                           ; pop jne vals
+        (-> 0 2)                        ; get [a b]
+        (swp)                           ; [a b] -> [b a]
+        (sub)
+        (<-S 0 1)                       ; save a-b to 0x0 if a>b
+        (goto :loop)
+      :ok                               ; else
+        (pop)
+        (pop)
+        (-> 0 1)                        ; return a
+        (ret))
+
+     (define rand-upto                  ; (call rand-upto maxv) => rand() % maxv
+       (call rand)
+       (call modulo)
+       (ret))
+
+    ))

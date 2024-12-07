@@ -24,7 +24,7 @@
 
 (defconst A/basic-op-table
   ;; sym  id
-  '(;;(push 0)
+  '((push 0)
     (pop 1)
     (swp 3)
     (sub 4)
@@ -38,14 +38,15 @@
     (read 12)
     (je 13)
     (jne 14)
-    ;; (call 15)
-    ;; (goto 16)
-    (ret 17)
-    (dup 18)
-    (jempt 19)
-    (jnempt 20)
-    (wmem 21)
-    (pmem 22)
+    (jlz 15)
+    (call 16)
+    (goto 17)
+    (ret 18)
+    (dup 19)
+    (jempt 20)
+    (jnempt 21)
+    (wmem 22)
+    (pmem 23)
 
     (__debug_print_stack 100 0)
     (__debug_print_region 101 1)
@@ -82,15 +83,15 @@
 (defun A//push (val env &optional noerr)
   "compile a push expression for `val' in `env'"
   (cond
-   ((numberp val) (vconcat [0] (A/to-int32 val)))
-   ((characterp val) (vconcat [0] (A/to-int32 val)))
+   ((numberp val) (vconcat (vector (A//OP 'push)) (A/to-int32 val)))
+   ((characterp val) (vconcat (vector (A//OP 'push)) (A/to-int32 val)))
    ((listp val) (-reduce #'vconcat (--map (A//push it env) (reverse val))))
    ((stringp val) (-reduce #'vconcat (--map (A//push it env) (reverse (string-to-list val)))))
    ((keywordp val) (let ((place (cdr (assoc val env))))
                      (if place
-                         (vconcat [0] (A/to-int32 place))
+                         (vconcat (vector (A//OP 'push)) (A/to-int32 place))
                        (if noerr
-                         (vconcat [0] (A/to-int32 0))
+                         (vconcat (vector (A//OP 'push)) (A/to-int32 0))
                          (error "undeclared identifier: %s" val)))))
    (t
     (error "invalid value to push: %s" val))))
@@ -103,7 +104,7 @@
         (vconcat
          (-reduce #'vconcat (-map #'(lambda (x) (A//push x env)) args))
          (A//push place env)
-         [15])
+         (vector (A//OP 'call)))
       (error "undeclared identifier: %s" (cadr exp)))))
 
 (defun A//mem-write-p (exp)
@@ -124,26 +125,31 @@
    (>= (length exp) 2)
    (eq (car exp) '->)))
 
+(defun A//OP (sym)
+  (cadr (assoc sym A/basic-op-table)))
+
 (defun A//wmem (exp env &optional noerr)
   (let ((vs (cddr exp)))
     (apply
      #'vconcat
      (cl-loop for i from 0 to (- (length vs) 1)
-              for val = (vconcat (A//push (+ A//dynmem-start (cadr exp) i) env noerr) (A//push (nth i vs) env noerr) [21])
+              for val = (vconcat (A//push (+ A//dynmem-start (cadr exp) i) env noerr) (A//push (nth i vs) env noerr) (vector (A//OP 'wmem)))
               collect val))))
 
 (defun A//wmem-from-stack (exp env &optional noerr)
   (apply
    #'vconcat
    (cl-loop for i from 0 to (- (caddr exp) 1)
-            for val = (vconcat (A//push (+ A//dynmem-start (cadr exp) i) env noerr) [3 21])
+            for val = (vconcat (A//push (+ A//dynmem-start (cadr exp) i) env noerr) (vector
+                                                                                     (A//OP 'swp)
+                                                                                     (A//OP 'wmem)))
             collect val)))
 
 (defun A//rmem (exp env &optional noerr)
   (apply
    #'vconcat
    (cl-loop for i from 0 to (- (caddr exp) 1)
-            for val = (vconcat (A//push (+ A//dynmem-start (cadr exp) i) env noerr) [22])
+            for val = (vconcat (A//push (+ A//dynmem-start (cadr exp) i) env noerr) (vector (A//OP 'pmem)))
             collect val)))
 
 (defun A//compile-basic (exp env)
@@ -159,7 +165,7 @@
      ((eq op 'goto)
       (let ((place (cdr (assoc (cadr exp) env))))
         (if place
-            (vconcat (A//push place env) [16])
+            (vconcat (A//push place env) (vector (A//OP 'goto)))
           (error "undeclared identifier: %s" (cadr exp)))))
      (t
       (if (> (length exp) 1)
@@ -215,7 +221,7 @@
 (defun A//call-start-prepend-memory (bin env)
   (vconcat
    (A//push :_start env)
-   [16]
+   (vector (A//OP 'goto))
    (make-vector A/dyn-memory 0)
    bin))
 

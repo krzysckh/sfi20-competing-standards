@@ -33,14 +33,15 @@ Ops:
 |12|read  | push 1 byte from stdin|
 |13|je    | pop a, b, c; jump to address a if b = c; push c, b|
 |14|jne   | pop a, b, c; jump to address a if b != c; push c, b|
-|15|call  | pop a; push current instruction pointer + 1 to call stack; jump to address a|
-|16|goto  | pop a; jump to address a|
-|17|ret   | jump to latest call|
-|18|dup   | duplicate top value of the stack|
-|19|jempt | pop a; jump to address a if stack is empty|
-|20|jnempt| pop a; jump to address a if stack is not empty|
-|21|wmem  | pop a, b; write a to code memory at pos b. you can assume a is in `<0, 255>`|
-|22|pmem  | pop a; push byte from code memory at pos a to the stack|
+|15|jlz   | pop a, b; jump to address a if b < 0; push b|
+|16|call  | pop a; push current instruction pointer + 1 to call stack; jump to address a|
+|17|goto  | pop a; jump to address a|
+|18|ret   | jump to latest call|
+|19|dup   | duplicate top value of the stack|
+|20|jempt | pop a; jump to address a if stack is empty|
+|21|jnempt| pop a; jump to address a if stack is not empty|
+|22|wmem  | pop a, b; write `a modulo 256` to code memory at pos b.
+|23|pmem  | pop a; push byte from code memory at pos a to the stack|
 
 \newpage
 
