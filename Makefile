@@ -14,5 +14,14 @@ spec.pdf: spec.md
 		-H res/coffee.tex \
 		-t pdf -o spec.pdf < $<
 
+competing-standards@master.tgz:
+	git archive --format=tgz -o $@ --prefix=competing-standards/ master
+
+sficpy: flag.bin spec.pdf vm.scm competing-standards@master.tgz
+	yes | sficpy competing-standards flag.bin
+	yes | sficpy competing-standards spec.pdf
+	yes | sficpy competing-standards vm.scm
+	yes | sficpy competing-standards competing-standards@master.tgz
+
 clean:
-	rm -f *.bin *.pdf
+	rm -f *.bin *.pdf *.tgz
