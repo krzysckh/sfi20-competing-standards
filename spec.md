@@ -45,30 +45,41 @@ Ops:
 
 \newpage
 
-binary format examples:
+## binary format examples
 
-push 17 would be encoded as:
-```
-0 17 0 0 0
-| \______/
-|    +
-|     \_ 17 in LSB
-opcode (push)
-```
+* `push 17`
 
-push 256 would be encoded as:
-```
-0 0 1 0 0
-| \_____/
-|    +
-|     \_ 256 in LSB
-opcode (push)
-```
+\begin{center}
+\begin{BVerbatim}
+... 0 17 0 0 0 ...
+    ^ \______/
+    |     |
+    | 17 in LSB
+    |
+    opcode (push)
+\end{BVerbatim}
+\end{center}
 
-all of the other opcodes don't use args from the binary format.
-for example, goto would be encoded as
-```
-16
-|
-opcode (goto)
-```
+* `push 256`
+
+\begin{center}
+\begin{BVerbatim}
+... 0 0 1 0 0 ...
+    ^ \_____/
+    |    |
+    | 256 in LSB
+    |
+    opcode (push)
+\end{BVerbatim}
+\end{center}
+
+* `goto`
+
+\begin{center}
+\begin{BVerbatim}
+... 16 ...
+    ^
+    |
+    opcode (goto)
+\end{BVerbatim}
+\end{center}
