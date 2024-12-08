@@ -2,15 +2,15 @@
 
 the vm consists of
 
-- an infinite stack manipulated by ops
+- an unbounded stack manipulated by ops
   - the stack MUST have a type large enough to hold a 32-bit signed integer
-- an infinite call stack manupulated by RET and CALL
+- an unbounded call stack manupulated by RET and CALL
   - the call stack MUST have a type large enough to hold a 32-bit signed integer
 
 the binary format (code data) consists of instructions as:
 
 - the operator to evaluate (uint8)
-- N arguments (int32 - LSB)
+- N arguments (int32 - little endian - low byte to high byte)
 
 args from code data are represented by [x, y, z],
 popped values are represented by [a, b, c, ...]:
@@ -34,13 +34,13 @@ Ops:
 |13|je    | pop a, b, c; jump to address a if b = c; push c, b|
 |14|jne   | pop a, b, c; jump to address a if b != c; push c, b|
 |15|jlz   | pop a, b; jump to address a if b < 0; push b|
-|16|call  | pop a; push current instruction pointer + 1 to call stack; jump to address a|
+|16|call  | pop a; push (current instruction pointer + 1) to call stack; jump to address a|
 |17|goto  | pop a; jump to address a|
 |18|ret   | jump to latest call|
 |19|dup   | duplicate top value of the stack|
 |20|jempt | pop a; jump to address a if stack is empty|
 |21|jnempt| pop a; jump to address a if stack is not empty|
-|22|wmem  | pop a, b; write `a modulo 256` to code memory at pos b.
+|22|wmem  | pop a, b; write `a modulo 256` to **code memory** at pos b.|
 |23|pmem  | pop a; push byte from code memory at pos a to the stack|
 
 \newpage
@@ -54,7 +54,7 @@ Ops:
 ... 0 17 0 0 0 ...
     ^ \______/
     |     |
-    | 17 in LSB
+    | value (17)
     |
     opcode (push)
 \end{BVerbatim}
@@ -67,7 +67,7 @@ Ops:
 ... 0 0 1 0 0 ...
     ^ \_____/
     |    |
-    | 256 in LSB
+    | value (256)
     |
     opcode (push)
 \end{BVerbatim}
