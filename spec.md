@@ -1,11 +1,15 @@
 \newpage
 
-the vm consists of
+## VM Specification
+
+the VM consists of
 
 - an unbounded stack manipulated by ops
   - the stack MUST have a type large enough to hold a 32-bit signed integer
 - an unbounded call stack manupulated by RET and CALL
   - the call stack MUST have a type large enough to hold a 32-bit signed integer
+- an unbounded CTF stack, you should probably keep an eye on it
+  - the CTF stack MUST have a type large enough to hold a 8-bit unsigned integer
 
 the binary format (code data) consists of instructions as:
 
@@ -42,6 +46,7 @@ Ops:
 |21|jnempt| pop a; jump to address a if stack is not empty|
 |22|wmem  | pop a, b; write `a modulo 256` to **code memory** at pos b.|
 |23|pmem  | pop a; push byte from code memory at pos a to the stack|
+|24|ctf   | pop a; push a to CTF stack|
 
 \newpage
 

@@ -47,6 +47,7 @@
     (jnempt 21)
     (wmem 22)
     (pmem 23)
+    (ctf 24)
 
     (__debug_print_stack 100 0)
     (__debug_print_region 101 1)

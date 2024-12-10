@@ -55,6 +55,17 @@
          (pop)
          (ret))
 
+     (define troll                      ;; 0 string
+       :loop
+         (& je 0 :ret)
+         (pop)
+         (ctf)
+         (goto :loop)
+       :ret
+         (pop)
+         (pop)
+         (ret))
+
      :_start
        (call init-rand 21 37 42)        ; don't delete this one
 
@@ -64,6 +75,8 @@
        (call ask 0 "2005" 0 "in what year was the 1st SFI held?")
        (call ask 0 "c" 0 "jaka firma nie chce zalatwiac praktyk gitom?\na) tauron\nb) polregio\nc) academica")
        (call ask 0 "6" 0 "how much is 2+2*2?")
+
+       (call troll 0 "you thought LMAO") ; :3
 
        (call print-image ,(--map (logxor it A//magic-number) (string-to-list (string-as-unibyte (f-read-bytes "res/beef.jpg"))))))))
        ;; (call print-image ,(--map (logxor it A//magic-number) (string-to-list "TODO: some more stuff and sfi20{abobobababba}\n"))))))
