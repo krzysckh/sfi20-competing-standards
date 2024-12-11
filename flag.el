@@ -3,6 +3,20 @@
 (add-to-list 'load-path ".")
 (load "io.el")
 
+(defconst A//euler-question
+  "If the numbers 1 to 5 are written out in words: one, two, three, four, five,
+then there are 3 + 3 + 5 + 4 + 4 = 19 letters used in total.
+
+if all numbers from 1 to 1000 (one thousand) were written out it words, how many letters would be used?
+
+NOTE: Do not count spaces or hyphens. For example, 342 (three hundred and forty-two)
+contains 23 letters and 115 (one hundred and fifteen) contains 20 letters.
+The use of \"and\" when writing out numbers is in compliance with British usage.
+
+")
+
+(defconst A//euler-answer "21124")
+
 (defconst A//magic-number 2138)
 (defconst A//flag
   (append
@@ -55,6 +69,22 @@
          (pop)
          (ret))
 
+     ;; https://projecteuler.net/problem=17
+     (define ask-euler
+       (call print 0 ,A//euler-question)
+       (call print 0 "> ")
+       (call read-line)
+       (push 0)
+       (push ,A//euler-answer)          ; yeah it can be read from the stack lol
+       (call strcmp)
+       (& jne 0 :ok)
+       (call fail)
+       :ok
+         (pop)
+         (pop)
+         (ret)
+       )
+
      (define troll                      ;; 0 string
        :loop
          (& je 0 :ret)
@@ -75,8 +105,10 @@
        (call ask 0 "2005" 0 "in what year was the 1st SFI held?")
        (call ask 0 "c" 0 "jaka firma nie chce zalatwiac praktyk gitom?\na) tauron\nb) polregio\nc) academica")
        (call ask 0 "6" 0 "how much is 2+2*2?")
+       (call ask-euler)
 
-       (call troll 0 "you thought LMAO") ; :3
+       (call troll 0 "hint: ceci n'est pas une pipe") ; :3
+       (call println 0 "congrats!")
 
        (call print-image ,(--map (logxor it A//magic-number) (string-to-list (string-as-unibyte (f-read-bytes "res/beef.jpg"))))))))
        ;; (call print-image ,(--map (logxor it A//magic-number) (string-to-list "TODO: some more stuff and sfi20{abobobababba}\n"))))))
