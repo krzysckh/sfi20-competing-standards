@@ -3,6 +3,9 @@
 (add-to-list 'load-path ".")
 (load "io.el")
 
+(defun A//xor (str num)
+  (--map (logxor it num) (string-to-list str)))
+
 (defconst A//euler-question
   "If the numbers 1 to 5 are written out in words: one, two, three, four, five,
 then there are 3 + 3 + 5 + 4 + 4 = 19 letters used in total.
@@ -89,6 +92,7 @@ The use of \"and\" when writing out numbers is in compliance with British usage.
        :loop
          (& je 0 :ret)
          (pop)
+         (& xor 42)
          (ctf)
          (goto :loop)
        :ret
@@ -103,12 +107,16 @@ The use of \"and\" when writing out numbers is in compliance with British usage.
        (call do-self-check)
 
        (call ask 0 "2005" 0 "in what year was the 1st SFI held?")
-       (call ask 0 "c" 0 "jaka firma nie chce zalatwiac praktyk gitom?\na) tauron\nb) polregio\nc) academica")
+       (call ask 0 "yes" 0 "was Larry Wall ever a speaker at SFI? [yes/no]")
        (call ask 0 "6" 0 "how much is 2+2*2?")
+
+       (call troll 0 ,(A//xor "umm, hii! thanks for tuning in to the CTF stack, i'm really glad you decided to see what's here, but unfortunately - the flag isn't there. instead i have a small hint: use pipes :33" 42))
+
        (call ask-euler)
 
-       (call troll 0 "hint: ceci n'est pas une pipe") ; :3
+       (call ask 0 "no" 0 "were you sniffing through the stack to find the answers faster? [yes/no]")
+
        (call println 0 "congrats!")
 
-       (call print-image ,(--map (logxor it A//magic-number) (string-to-list (string-as-unibyte (f-read-bytes "res/beef.jpg"))))))))
+       (call print-image ,(A//xor (string-as-unibyte (f-read-bytes "res/beef.jpg")) A//magic-number)))))
        ;; (call print-image ,(--map (logxor it A//magic-number) (string-to-list "TODO: some more stuff and sfi20{abobobababba}\n"))))))

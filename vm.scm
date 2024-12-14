@@ -1,4 +1,4 @@
-;; -*- mode: scheme; compile-command: "printf '2005\\nc\\n6\\n21124\\n' | ol -r vm.scm flag.bin | tail -c +687 > /tmp/a.jpg && sxiv /tmp/a.jpg" -*-
+;; -*- mode: scheme; compile-command: "printf '2005\\nyes\\n6\\n21124\\nno\\n' | ol -r vm.scm flag.bin | tail -c +729 > /tmp/a.jpg && sxiv /tmp/a.jpg" -*-
 
 (import
  (owl toplevel)
