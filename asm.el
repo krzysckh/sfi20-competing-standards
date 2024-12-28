@@ -18,6 +18,8 @@
 (require 'dash)
 (require 'f)
 
+(defvar A/error-on-noret t)
+
 (defconst A/dyn-memory 2048)
 (defconst A//start-size 6)
 (defconst A//dynmem-start A//start-size)
@@ -58,7 +60,9 @@
   (and
    (listp instr)
    (> (length instr) 2)
-   (eq (car instr) 'define)
+   (or
+    (eq (car instr) 'define)
+    (eq (car instr) 'define-noreturn))
    (symbolp (cadr instr))))
 
 (defun A/funcallp (instr)
@@ -196,11 +200,16 @@
 
 (defun A//compile-definition (code env memptr acc)
   (let* ((def (car code))
+         (f (car def))
          (name (cadr def))
          (func (cddr def))
          (local-env nil)
          (func-location memptr)
          (bin nil))
+
+    (message "%s: %s" name f)
+    (when (and A/error-on-noret (eq 'define f) (not (--any-p (and (listp it) (member 'ret it)) func)))
+      (error "Function %s does not return" name))
 
     ;; save local-env
     (dolist (op func)

@@ -171,6 +171,11 @@
         (call drain!)
         (& ret 0))
 
+    ;; tested the assmebler with this one lol
+    ; (define try-noret
+    ;   (pop)
+    ;   )
+
     ;; https://www.stix.id.au/wiki/Fast_8-bit_pseudorandom_number_generator
     (define rand
       (-> #x103 1)                      ; x++

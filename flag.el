@@ -24,7 +24,7 @@ The use of \"and\" when writing out numbers is in compliance with British usage.
 (defconst A//flag
   (append
    A//io
-   `((define fail
+   `((define-noreturn fail
        (call print 0 "No.\n")
        (& div 0 0))
 
