@@ -206,8 +206,9 @@
          (local-env nil)
          (func-location memptr)
          (bin nil))
+    (when noninteractive
+      (message "compile-definition %s" name))
 
-    (message "%s: %s" name f)
     (when (and A/error-on-noret (eq 'define f) (not (--any-p (and (listp it) (member 'ret it)) func)))
       (error "Function %s does not return" name))
 
@@ -246,6 +247,7 @@
 
 (defun A/compile (code &optional outfile)
   "compile `code', if defined, write output data to `outfile'"
+  (message "Assembling %d instructions to %s..." (length (-flatten code)) outfile)
   (let ((program (A//compile code nil (+ A//start-size A/dyn-memory))))
     (if outfile
         (f-write-bytes (apply #'unibyte-string (append program nil)) outfile)
