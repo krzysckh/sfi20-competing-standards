@@ -41,7 +41,7 @@
 (define sub (make-mathop -))
 (define add (make-mathop +))
 (define mul (make-mathop *))
-(define div (make-mathop /))
+(define div (make-mathop (λ (a b) (floor (/ a b))))) ; oops!
 (define xor (make-mathop bxor))
 (define <<  (make-mathop <<))
 (define >>  (make-mathop >>))
@@ -122,7 +122,7 @@
     (cont (+ ip 1) stack call-stack (append (list a) ctf-stack) code)))
 
 (define (debug-print-stack ip stack call-stack ctf-stack code cont)
-  (print stack)
+  (print (reverse stack))
   (cont (+ ip 1) stack call-stack ctf-stack code))
 
 (define (debug-print-region ip stack call-stack ctf-stack code cont)
