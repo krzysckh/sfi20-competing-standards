@@ -8,6 +8,8 @@ This repo includes
 
 ## Using the assembler
 
+[Read blog post](https://krzysckh.org/b/Virtual-mischief.html).
+
 The assembler is written in emacs lisp (bold choice) and the syntax is fairly simple.
 It's a 1.5 pass assembler (would be a strong choice of words to call it a 2-pass assembler as it only does *some* "backtracking").
 
