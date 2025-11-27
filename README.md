@@ -6,9 +6,9 @@ This repo includes
 - An assembler for this VM (asm.el)
 - An implementation of this VM (vm.scm)
 
-## Using the assembler
+Read the [blog post](https://krzysckh.org/b/Virtual-mischief.html).
 
-[Read blog post](https://krzysckh.org/b/Virtual-mischief.html).
+## Using the assembler
 
 The assembler is written in emacs lisp (bold choice) and the syntax is fairly simple.
 It's a 1.5 pass assembler (would be a strong choice of words to call it a 2-pass assembler as it only does *some* "backtracking").
